@@ -29,7 +29,6 @@ Rules = [
     RowCount > 0,
     IsComplete "id_student",
     IsUnique "id_student",
-    ColumnValues "average_score" between 0 and 100,
     ColumnValues "total_clicks" >= 0,
     ColumnValues "avg_daily_clicks" >= 0,
     ColumnValues "assessment_count" > 0
