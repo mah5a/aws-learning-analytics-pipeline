@@ -24,9 +24,16 @@ job.init(args['JOB_NAME'], args)
 
 # Default ruleset used by all target nodes with data quality enabled
 DEFAULT_DATA_QUALITY_RULESET = """
-    Rules = [
-        ColumnCount > 0
-    ]
+Rules = [
+    ColumnCount = 9,
+    RowCount > 0,
+    IsComplete "id_student",
+    IsUnique "id_student",
+    ColumnValues "average_score" between 0 and 100,
+    ColumnValues "total_clicks" >= 0,
+    ColumnValues "avg_daily_clicks" >= 0,
+    ColumnValues "assessment_count" > 0
+]
 """
 
 # Script generated for node AWS Glue Data Catalog
@@ -54,12 +61,12 @@ Join_node1783974481776 = Join.apply(frame1=studentvle_features_node1783453998469
 ChangeSchemaafterjoin_node1783989704179 = ApplyMapping.apply(frame=Join_node1783974481776, mappings=[("id_student", "long", "id_student", "long"), ("total_clicks", "long", "total_clicks", "long"), ("avg_daily_clicks", "double", "avg_daily_clicks", "double"), ("first_activity_day", "long", "first_activity_day", "long"), ("last_activity_day", "long", "last_activity_day", "long"), ("average_score", "double", "average_score", "double"), ("max_score", "string", "max_score", "double"), ("min_score", "string", "min_score", "double"), ("assessment_count", "long", "assessment_count", "long")], transformation_ctx="ChangeSchemaafterjoin_node1783989704179")
 
 # Script generated for node Amazon S3
-EvaluateDataQuality().process_rows(frame=studentassessment_features_node1783972460403, ruleset=DEFAULT_DATA_QUALITY_RULESET, publishing_options={"dataQualityEvaluationContext": "EvaluateDataQuality_node1783968849198", "enableDataQualityResultsPublishing": True}, additional_options={"dataQualityResultsPublishing.strategy": "BEST_EFFORT", "observations.scope": "ALL"})
-AmazonS3_node1783973871305 = glueContext.write_dynamic_frame.from_options(frame=studentassessment_features_node1783972460403, connection_type="s3", format="glueparquet", connection_options={"path": "s3://oulad-data-engineering/curated/studentassessment_features/", "partitionKeys": []}, format_options={"compression": "snappy"}, transformation_ctx="AmazonS3_node1783973871305")
+# EvaluateDataQuality().process_rows(frame=studentassessment_features_node1783972460403, ruleset=DEFAULT_DATA_QUALITY_RULESET, publishing_options={"dataQualityEvaluationContext": "EvaluateDataQuality_node1783968849198", "enableDataQualityResultsPublishing": True}, additional_options={"dataQualityResultsPublishing.strategy": "BEST_EFFORT", "observations.scope": "ALL"})
+# AmazonS3_node1783973871305 = glueContext.write_dynamic_frame.from_options(frame=studentassessment_features_node1783972460403, connection_type="s3", format="glueparquet", connection_options={"path": "s3://oulad-data-engineering/curated/studentassessment_features/", "partitionKeys": []}, format_options={"compression": "snappy"}, transformation_ctx="AmazonS3_node1783973871305")
 
 # Script generated for node Amazon S3
-EvaluateDataQuality().process_rows(frame=studentvle_features_node1783453998469, ruleset=DEFAULT_DATA_QUALITY_RULESET, publishing_options={"dataQualityEvaluationContext": "EvaluateDataQuality_node1783448358437", "enableDataQualityResultsPublishing": True}, additional_options={"dataQualityResultsPublishing.strategy": "BEST_EFFORT", "observations.scope": "ALL"})
-AmazonS3_node1783452491182 = glueContext.write_dynamic_frame.from_options(frame=studentvle_features_node1783453998469, connection_type="s3", format="glueparquet", connection_options={"path": "s3://oulad-data-engineering/curated/studentvle_features/", "partitionKeys": []}, format_options={"compression": "snappy"}, transformation_ctx="AmazonS3_node1783452491182")
+# EvaluateDataQuality().process_rows(frame=studentvle_features_node1783453998469, ruleset=DEFAULT_DATA_QUALITY_RULESET, publishing_options={"dataQualityEvaluationContext": "EvaluateDataQuality_node1783448358437", "enableDataQualityResultsPublishing": True}, additional_options={"dataQualityResultsPublishing.strategy": "BEST_EFFORT", "observations.scope": "ALL"})
+# AmazonS3_node1783452491182 = glueContext.write_dynamic_frame.from_options(frame=studentvle_features_node1783453998469, connection_type="s3", format="glueparquet", connection_options={"path": "s3://oulad-data-engineering/curated/studentvle_features/", "partitionKeys": []}, format_options={"compression": "snappy"}, transformation_ctx="AmazonS3_node1783452491182")
 
 # Script generated for node Amazon S3
 EvaluateDataQuality().process_rows(frame=ChangeSchemaafterjoin_node1783989704179, ruleset=DEFAULT_DATA_QUALITY_RULESET, publishing_options={"dataQualityEvaluationContext": "EvaluateDataQuality_node1783968849198", "enableDataQualityResultsPublishing": True}, additional_options={"dataQualityResultsPublishing.strategy": "BEST_EFFORT", "observations.scope": "ALL"})
