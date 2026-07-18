@@ -1,0 +1,31 @@
+name: Deploy Glue Jobs to S3
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "glue_jobs/**"
+      - ".github/workflows/cd.yml"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::934384777604:role/GitHubActionsRole
+          aws-region: ca-central-1
+
+      - name: Deploy Glue scripts to S3
+        run: |
+          aws s3 sync glue_jobs/ s3://oulad-data-engineering/glue_jobs/ --delete
