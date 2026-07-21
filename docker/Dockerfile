@@ -1,0 +1,1 @@
+FROM public.ecr.aws/glue/aws-glue-libs:5
