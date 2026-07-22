@@ -265,7 +265,7 @@ Planned enhancements include:
 
 # Skills Demonstrated
 
-- AWS Data Engineering
+- End-to-End AWS Data Engineering
 - ETL Pipeline Development
 - Amazon S3
 - AWS Glue
