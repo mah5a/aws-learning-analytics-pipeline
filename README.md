@@ -1,33 +1,62 @@
-
 # AWS Learning Analytics Pipeline
 
-An end-to-end **AWS Data Engineering** project that builds a scalable Learning Analytics pipeline using the **Open University Learning Analytics Dataset (OULAD)**.
+An end-to-end **AWS Data Engineering** project that builds a cloud-based Learning Analytics pipeline using the **Open University Learning Analytics Dataset (OULAD)**.
 
-The project demonstrates how raw educational data can be ingested, transformed, cataloged, and analyzed using AWS cloud services including **Amazon S3, AWS Glue, Glue Crawlers, Glue Data Catalog, and Amazon Athena**.
+This project demonstrates how educational data is ingested, transformed, cataloged, orchestrated, queried, and visualized using modern AWS data engineering services.
 
 ---
 
 # Architecture
 
 <p align="center">
-  <img src="architecture/AWS Learning Analytics Pipeline.png" alt="AWS Learning Analytics Pipeline Architecture" width="450">
+  <img src="architecture/AWS Learning Analytics Pipeline.png" alt="AWS Learning Analytics Pipeline Architecture" width="650">
 </p>
 
 ---
 
 # Project Overview
 
-This project implements a cloud-based ETL pipeline for educational data analytics.
+This project simulates a production-style batch data pipeline on AWS.
 
 The pipeline:
 
-- Stores raw datasets in Amazon S3
-- Automatically discovers schemas using AWS Glue Crawlers
-- Performs ETL transformations using AWS Glue (PySpark)
-- Engineers student learning features
-- Stores processed datasets in Amazon S3 Curated Zone
-- Registers metadata in AWS Glue Data Catalog
-- Executes analytical SQL queries using Amazon Athena
+- Stores raw educational datasets in Amazon S3
+- Orchestrates the workflow using Apache Airflow
+- Performs ETL transformations with AWS Glue (PySpark)
+- Engineers learning analytics features
+- Stores curated datasets in Amazon S3 (Parquet)
+- Updates metadata using AWS Glue Crawlers
+- Queries data using Amazon Athena
+- Visualizes insights with Power BI
+
+---
+
+# Pipeline Workflow
+
+```text
+Amazon S3 (Raw Data)
+        │
+        ▼
+Apache Airflow
+        │
+        ▼
+AWS Glue ETL (PySpark)
+        │
+        ▼
+Amazon S3 (Curated)
+        │
+        ▼
+AWS Glue Crawler
+        │
+        ▼
+Glue Data Catalog
+        │
+        ▼
+Amazon Athena
+        │
+        ▼
+Power BI Dashboard
+```
 
 ---
 
@@ -38,12 +67,14 @@ The pipeline:
 | Cloud | AWS |
 | Storage | Amazon S3 |
 | ETL | AWS Glue |
+| Processing | PySpark |
+| Orchestration | Apache Airflow |
 | Metadata | AWS Glue Data Catalog |
 | Crawling | AWS Glue Crawlers |
 | Query Engine | Amazon Athena |
+| Dashboard | Power BI |
 | Programming | Python |
-| Processing | PySpark |
-| SQL | Athena SQL |
+| Containerization | Docker |
 | Version Control | Git & GitHub |
 
 ---
@@ -52,7 +83,7 @@ The pipeline:
 
 **Open University Learning Analytics Dataset (OULAD)**
 
-The dataset contains information about:
+The dataset includes:
 
 - Student demographics
 - Student assessments
@@ -63,11 +94,11 @@ The dataset contains information about:
 
 # ETL Pipeline
 
-## Step 1 — Raw Data
+### 1. Raw Data Ingestion
 
-CSV datasets are uploaded into the Raw Zone in Amazon S3.
+CSV files are uploaded into the Amazon S3 Raw Zone.
 
-Examples:
+Example datasets:
 
 - studentInfo.csv
 - studentAssessment.csv
@@ -75,45 +106,50 @@ Examples:
 
 ---
 
-## Step 2 — Metadata Discovery
+### 2. Workflow Orchestration
 
-AWS Glue Crawlers automatically discover:
+Apache Airflow automates the pipeline by:
 
-- Tables
-- Columns
-- Data Types
-
-Metadata is stored in AWS Glue Data Catalog.
+- Validating source files in Amazon S3
+- Triggering AWS Glue ETL jobs
+- Running AWS Glue Crawlers
+- Validating output with Amazon Athena
 
 ---
 
-## Step 3 — ETL Processing
+### 3. Data Transformation
 
 AWS Glue ETL jobs perform:
 
 - Data cleaning
-- Aggregation
-- Feature Engineering
-- Joining datasets
+- Dataset joins
+- Feature engineering
 - Schema mapping
+- Aggregations
 
 ---
 
-## Step 4 — Curated Zone
+### 4. Curated Data
 
-Processed datasets are written into Amazon S3 Curated Zone in Parquet format.
+Processed data is written to Amazon S3 in Parquet format for efficient analytics.
 
 ---
 
-## Step 5 — Analytics
+### 5. Metadata Management
 
-Amazon Athena queries the curated datasets for reporting and analytics.
+AWS Glue Crawlers automatically update the Glue Data Catalog.
+
+---
+
+### 6. Analytics
+
+Amazon Athena executes SQL queries directly on curated datasets.
 
 ---
 
 # Feature Engineering
 
-The pipeline creates learning analytics features including:
+The pipeline generates learning analytics features such as:
 
 - Average Assessment Score
 - Failed Assessments
@@ -123,10 +159,11 @@ The pipeline creates learning analytics features including:
 - First Activity Day
 - Last Activity Day
 
-These features can be used for:
+These features support:
 
 - Student performance analysis
 - Engagement analytics
+- Learning behavior analysis
 - Predictive modeling
 - Dropout risk prediction
 
@@ -135,19 +172,29 @@ These features can be used for:
 # Repository Structure
 
 ```text
-aws-learning-analytics-pipeline
+aws-learning-analytics-pipeline/
+│
+├── airflow/
+│   ├── dags/
+│   └── docker-compose.yaml
 │
 ├── architecture/
+│
 ├── athena/
 │   └── queries.sql
+│
+├── docker/
+│   └── Dockerfile
 │
 ├── docs/
 │
 ├── glue_jobs/
 │
+├── powerbi/
+│   └── AWS_learning_analytics_dashboard.pbix
+│
 ├── screenshots/
 │   ├── athena/
-│   ├── crawler/
 │   ├── glue/
 │   └── s3/
 │
@@ -158,10 +205,14 @@ aws-learning-analytics-pipeline
 
 # Sample Athena Queries
 
+Average assessment score:
+
 ```sql
 SELECT AVG(avg_score)
 FROM student_features;
 ```
+
+Students with failed assessments:
 
 ```sql
 SELECT *
@@ -169,31 +220,61 @@ FROM student_features
 WHERE failed_assessments > 0;
 ```
 
+Top-performing students:
+
+```sql
+SELECT id_student, avg_score
+FROM student_features
+ORDER BY avg_score DESC
+LIMIT 10;
+```
+
+Average submission delay:
+
+```sql
+SELECT AVG(avg_submission_delay)
+FROM student_features;
+```
+
+---
+
+# Power BI Dashboard
+
+The curated dataset is connected to Power BI to visualize:
+
+- Student performance
+- Assessment scores
+- Learning engagement
+- Click activity
+- Submission behavior
+
+---
+
 # Future Improvements
 
-Potential enhancements include:
+Planned enhancements include:
 
-- Apache Airflow orchestration
 - AWS Lambda automation
 - Amazon EventBridge scheduling
 - CI/CD using GitHub Actions
-- Infrastructure as Code using Terraform
-- Data Quality Validation
-- Cloud Monitoring & Logging
+- Infrastructure as Code (Terraform)
+- CloudWatch monitoring
+- Expanded data quality validation
 
 ---
 
 # Skills Demonstrated
 
 - AWS Data Engineering
-- Cloud ETL Pipelines
+- ETL Pipeline Development
 - Amazon S3
 - AWS Glue
-- Glue Crawlers
-- Glue Data Catalog
+- Apache Airflow
 - PySpark
-- SQL Analytics
 - Amazon Athena
+- SQL Analytics
+- Power BI
+- Docker
 - Feature Engineering
 - Data Modeling
 - Git & GitHub
@@ -202,6 +283,6 @@ Potential enhancements include:
 
 # Author
 
-**Mahsa Karamimehr**
+**Mahsa Kmehr**
 
 Data Analyst | Aspiring Data Engineer
