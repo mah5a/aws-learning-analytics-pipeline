@@ -1,2 +1,10 @@
 __pycache__/
 *.pyc
+
+# Airflow
+airflow/logs/*
+!airflow/logs/.gitkeep
+
+# Airflow local files
+airflow/.env
+airflow/airflow.db
